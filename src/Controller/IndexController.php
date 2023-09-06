@@ -23,7 +23,7 @@ class IndexController extends CSVImport\Controller\IndexController
         $form = $this->getForm(CSVImport\Form\ImportForm::class);
 
         // Modify the CSVImport Form to accept zipfiles only
-        $form->setAttribute('action', '/admin/zip-importer/upload'); // uploadAction
+        $form->setAttribute('action', 'zip-importer/upload'); // uploadAction
         $form->get('source')
             ->setOptions([
                 'label' => 'Zip File', //@translate
@@ -86,6 +86,7 @@ class IndexController extends CSVImport\Controller\IndexController
             $this->messenger()->addError('Zipfile is invalid. It may be corrupted.'); // @translate
             return $this->redirect()->toRoute('admin/zip-importer');
         }
+        $this->setTempPermissions($tempPath);
         unlink($post['source']['tmp_name']); // Delete zip
 
         // Find spreadsheet in archive
@@ -134,7 +135,7 @@ class IndexController extends CSVImport\Controller\IndexController
         $form = $this->getForm(CSVImport\Form\MappingForm::class, $mappingOptions);
 
         // Replace csv action with zip-specific version
-        $form->setAttribute('action', '/admin/zip-importer/mapping');
+        $form->setAttribute('action', 'mapping');
 
         $automapOptions = [];
         $automapOptions['check_names_alone'] = $args['automap_check_names_alone'];
@@ -244,31 +245,67 @@ class IndexController extends CSVImport\Controller\IndexController
      */
     protected function rmTemp($path)
     {
+        $this->doRecursive(
+            $path,
+            fn($dir) => rmdir($dir),
+            fn($file) => unlink($file)
+        );
+    }
+
+    /**
+     * Recursively set file permissions
+     * @param mixed $path
+     * @return void
+     */
+    protected function setTempPermissions($path) {
+        $setPerms = fn($filepath) => chmod($filepath, 0777);
+        $this->doRecursive($path, $setPerms, $setPerms);
+    }
+
+    /**
+     * Recursively call callbacks on directories and files inside the
+     * temp directory.
+     *
+     * @param string $path
+     * @param callable $onDir
+     * @param callable $onFile
+     * @return void
+     */
+    protected function doRecursive(
+        $path,
+        $onDir = null,
+        $onFile = null
+    ) {
         if (!str_starts_with($path, $this->tempDir)) {
             // bail
             return;
         }
 
+        $onDir = $onDir ?? function (...$args) { };
+        $onFile = $onFile ?? function (...$args) { };
+
         // Handle file path
         if (!is_dir($path)) {
-            unlink($path);
+            $onFile($path);
             return;
         }
 
         // Handle directory path
-        // First delete children
+        // First do children
         $dir = opendir($path);
         while(false !== ( $file = readdir($dir)) ) {
-            if ($file == '.' || $file == '..') {
-                continue;
-            }
+            if ($file == '.' || $file == '..') continue;
             // Recurse.
-            $this->rmTemp($path . DIRECTORY_SEPARATOR . $file);
+            $this->doRecursive(
+                $path . DIRECTORY_SEPARATOR . $file,
+                $onDir,
+                $onFile
+            );
         }
         closedir($dir);
 
-        // Then delete dir.
-        rmdir($path);
+        // Then do dir.
+        $onDir($path);
     }
 
     /**

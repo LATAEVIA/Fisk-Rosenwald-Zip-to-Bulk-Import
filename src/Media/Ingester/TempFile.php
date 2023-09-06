@@ -41,7 +41,7 @@ class TempFile implements IngesterInterface
         Validator $validator
     ) {
         // Only work on the resolved real directory path.
-        $this->directory = $directory;
+        $this->directory = $directory ? realpath($directory) : '';
         $this->tempFileFactory = $tempFileFactory;
         $this->validator = $validator;
     }
