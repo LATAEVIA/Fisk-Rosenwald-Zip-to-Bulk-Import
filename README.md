@@ -18,9 +18,9 @@ Before using this plugin ensure:
 
 ## Installation
 
-1. **Download:** Obtain the plugin by downloading the zip file.
+1. **Download:** Obtain the plugin by downloading the zip file here.
 
-2. **Local Installation:**
+2. **Installation:**
    - Add the zip to the Omeka-S modules folder and unzip it.
    - Rename the unzipped folder to "ZipImporter" if it's not already named as such.
    - Open a terminal, navigate to the "ZipImporter" folder, and run `composer install`.
@@ -45,7 +45,9 @@ Before using this plugin ensure:
    - Find the "Zip Import" option in the lower left of the Omeka-S Admin Dashboard.
 
 2. **Upload your zip file.**
-   - Click on "Zip Import" and upload your zip file containing images and CSV (Sample CSV coming soon).
+   - Click on "Zip Import" and upload your zip file containing images and CSV
+      - [Sample of zip](https://github.com/LATAEVIA/Fisk-Rosenwald-Zip-to-Bulk-Import/blob/main/GitHub%20Sample%20Upload%20Structure.zip)
+      - Note: CSV must be UTF-8 encoded when saved
    - Recommended: Tick the "Automap with simple labels" box.
 
 3. **Verify your mapping and click Import.**
@@ -67,7 +69,7 @@ Thank you for considering contributing to the Fisk-Rosenwald-Zip-to-Bulk-Import!
 
 ### Reporting Issues
 
-Before May 2026:
+Before May 2025:
 If you encounter any issues, have questions, or want to suggest enhancements, please open an issue on the [GitHub Issues page](https://github.com/LATAEVIA/Fisk-Rosenwald-Zip-to-Bulk-Import/issues). Provide detailed information about the problem, including steps to reproduce it.
 
 **After May 2025:**
