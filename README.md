@@ -1,4 +1,4 @@
-# Omeka-S Bulk Upload Plugin
+# SEE FORK! Omeka-S Bulk Upload Plugin
 
 The Omeka-S Bulk Upload Plugin streamlines the process of bulk uploading digital objects and metadata to Omeka-S. Follow these steps to use the plugin after installation:
 
